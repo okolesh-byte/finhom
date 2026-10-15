@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Finhom — уверенность в личных финансах{% endblock %}
+{% block public_content %}
+<header class="public-nav">
+    <a class="brand" href="/"><span>F</span> Finhom</a>
+    <nav><a href="#possibilities">Возможности</a><a href="#how">Как это работает</a><a href="{% url 'login' %}">Войти</a></nav>
+</header>
+<main>
+    <section class="hero" style="--hero-image: url('{% static 'core/img/hero-finance.png' %}')">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <p class="eyebrow">Персональная система финансового контроля</p>
+            <h1>Finhom</h1>
+            <p class="hero-lead">Планируйте бюджет, контролируйте кредиты и заранее замечайте финансовые риски.</p>
+            <div class="hero-actions"><a class="button primary" href="{% url 'accounts:register' %}">Создать аккаунт</a><a class="button secondary" href="{% url 'login' %}">У меня уже есть аккаунт</a></div>
+            <div class="demo-strip" aria-label="Пример показателей">
+                <div><span>Прогноз баланса</span><strong data-counter="42500">0</strong><small> ₽</small></div>
+                <div><span>Бюджет месяца</span><strong data-counter="68">0</strong><small>% использовано</small></div>
+                <div><span>Финансовый риск</span><strong class="safe-text">Низкий</strong></div>
+            </div>
+        </div>
+    </section>
+    <section class="content-band" id="possibilities">
+        <div class="section-heading"><p class="eyebrow">Всё важное в одном месте</p><h2>Не просто записывайте траты — понимайте их</h2></div>
+        <div class="feature-grid">
+            <article><i data-lucide="pie-chart"></i><h3>Понятный бюджет</h3><p>Категории, месячные лимиты и наглядное сравнение плана с фактом.</p></article>
+            <article><i data-lucide="calendar-check"></i><h3>Контроль кредитов</h3><p>График платежей и сравнение двух способов досрочного погашения.</p></article>
+            <article><i data-lucide="shield-alert"></i><h3>Ранние предупреждения</h3><p>Три уровня риска и конкретные рекомендации по исправлению ситуации.</p></article>
+            <article><i data-lucide="goal"></i><h3>Накопительные цели</h3><p>Конверты показывают прогресс и необходимый ежемесячный взнос.</p></article>
+        </div>
+    </section>
+    <section class="steps-band" id="how">
+        <div class="section-heading"><p class="eyebrow">Первые шаги</p><h2>Начните с трёх простых действий</h2></div>
+        <ol class="steps"><li><span>01</span><div><h3>Создайте профиль</h3><p>Регистрация занимает меньше минуты.</p></div></li><li><span>02</span><div><h3>Добавьте данные</h3><p>Укажите доходы, расходы и действующие кредиты.</p></div></li><li><span>03</span><div><h3>Получите картину</h3><p>Finhom соберёт показатели, прогноз и рекомендации.</p></div></li></ol>
+    </section>
+</main>
+<footer class="public-footer"><b>Finhom</b><span>Учебный проект по финансовой грамотности</span></footer>
+{% endblock %}

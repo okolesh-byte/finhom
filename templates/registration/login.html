@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Вход — Finhom{% endblock %}
+{% block public_content %}
+<main class="auth-page" style="--hero-image: url('{% static 'core/img/hero-finance.png' %}')">
+    <a class="brand auth-brand" href="/"><span>F</span> Finhom</a>
+    <section class="auth-panel"><p class="eyebrow">С возвращением</p><h1>Вход в Finhom</h1><p>Продолжите работу со своим финансовым планом.</p><form method="post" class="form-stack">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Войти</button></form><p class="form-foot"><a href="{% url 'password_reset' %}">Забыли пароль?</a></p><p class="form-foot">Нет аккаунта? <a href="{% url 'accounts:register' %}">Зарегистрироваться</a></p></section>
+</main>
+{% endblock %}

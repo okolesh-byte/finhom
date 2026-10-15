@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Настройка финансов — Finhom{% endblock %}
+{% block content %}
+<div class="page narrow"><div class="page-heading"><div><p class="eyebrow">Шаг 1 из 1</p><h1>Настройте финансовый профиль</h1><p>Эти данные нужны для прогноза и оценки долговой нагрузки. Их можно изменить позже.</p></div></div><section class="form-section"><form method="post" class="form-stack">{% csrf_token %}{{ form.as_p }}<button class="button primary">Завершить настройку</button></form></section></div>
+{% endblock %}

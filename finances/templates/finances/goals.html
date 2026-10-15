@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Цели — Finhom{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-heading"><div><p class="eyebrow">Накопления</p><h1>Конверты и цели</h1><p>Отделяйте деньги на важное и следите за прогрессом.</p></div></div>
+    <div class="two-columns goals-layout">
+        <section><div class="goal-grid">{% for goal in goals %}<article class="goal-card">
+            <div class="goal-card-head"><div class="goal-icon"><i data-lucide="goal"></i></div><span class="row-actions"><a class="icon-button" href="{% url 'finances:goal_edit' goal.pk %}" aria-label="Изменить цель" title="Изменить цель"><i data-lucide="pencil"></i></a><form method="post" action="{% url 'finances:goal_delete' goal.pk %}" onsubmit="return confirm('Удалить накопительную цель?')">{% csrf_token %}<button class="icon-button danger" aria-label="Удалить цель" title="Удалить цель"><i data-lucide="trash-2"></i></button></form></span></div>
+            <span class="status">{{ goal.get_status_display }}</span><h2>{{ goal.name }}</h2><strong>{{ goal.current_amount|floatformat:0 }} ₽</strong><p>из {{ goal.target_amount|floatformat:0 }} ₽</p><div class="progress"><span style="width:{{ goal.progress }}%"></span></div><small>{{ goal.progress }}% выполнено</small><a class="button secondary" href="{% url 'finances:goal_contribute' goal.pk %}">Пополнить</a>
+        </article>{% empty %}<div class="empty-state"><p>У вас пока нет накопительных целей.</p></div>{% endfor %}</div></section>
+        <section class="form-section sticky-form"><h2>Новый конверт</h2><form method="post" class="form-stack">{% csrf_token %}{{ form.as_p }}<button class="button primary">Создать цель</button></form></section>
+    </div>
+</div>
+{% endblock %}

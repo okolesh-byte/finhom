@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Кредиты — Finhom{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-heading"><div><p class="eyebrow">Долговая нагрузка</p><h1>Кредиты</h1><p>Данные переносятся из банка и используются для личного планирования.</p></div></div>
+    <div class="two-columns">
+        <section class="data-section"><div class="table-wrap"><table>
+            <thead><tr><th>Кредит</th><th>Остаток</th><th>Ставка</th><th>Платёж</th><th>Статус</th></tr></thead>
+            <tbody>{% for loan in loans %}<tr><td><a href="{% url 'loans:detail' loan.pk %}"><strong>{{ loan.name }}</strong><br><small>{{ loan.bank }}</small></a></td><td>{{ loan.current_balance|floatformat:0 }} ₽</td><td>{{ loan.annual_rate }}%</td><td>{{ loan.monthly_payment|floatformat:0 }} ₽</td><td><span class="status">{% if loan.is_active %}Активен{% else %}Закрыт{% endif %}</span></td></tr>{% empty %}<tr><td colspan="5" class="table-empty">Кредиты ещё не добавлены</td></tr>{% endfor %}</tbody>
+        </table></div></section>
+        <section class="form-section sticky-form"><h2>Добавить кредит</h2><form method="post" class="form-stack compact">{% csrf_token %}{{ form.as_p }}<button class="button primary">Сохранить кредит</button></form></section>
+    </div>
+</div>
+{% endblock %}

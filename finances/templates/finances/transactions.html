@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Операции — Finhom{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-heading">
+        <div><p class="eyebrow">Учёт денег</p><h1>Операции</h1><p>Доходы и расходы в хронологическом порядке.</p></div>
+        <div class="heading-actions">
+            <a class="button secondary" href="{% url 'finances:transaction_export' %}"><i data-lucide="download"></i> Скачать CSV</a>
+            <a class="button primary" href="{% url 'finances:transaction_create' %}"><i data-lucide="plus"></i> Новая операция</a>
+        </div>
+    </div>
+    <section class="data-section"><div class="table-wrap"><table>
+        <thead><tr><th>Дата</th><th>Тип</th><th>Категория</th><th>Заметка</th><th>Сумма</th><th></th></tr></thead>
+        <tbody>{% for item in transactions %}<tr>
+            <td>{{ item.operation_date|date:'d.m.Y' }}</td><td><span class="status status-{{ item.kind }}">{{ item.get_kind_display }}</span></td>
+            <td>{{ item.category.name }}</td><td>{{ item.note|default:'—' }}</td><td class="amount">{{ item.amount|floatformat:2 }} ₽</td>
+            <td class="row-actions"><a class="icon-button" href="{% url 'finances:transaction_edit' item.pk %}" aria-label="Изменить" title="Изменить"><i data-lucide="pencil"></i></a><form method="post" action="{% url 'finances:transaction_delete' item.pk %}" onsubmit="return confirm('Удалить операцию?')">{% csrf_token %}<button class="icon-button danger" aria-label="Удалить" title="Удалить"><i data-lucide="trash-2"></i></button></form></td>
+        </tr>{% empty %}<tr><td colspan="6" class="table-empty">Добавьте первую финансовую операцию</td></tr>{% endfor %}</tbody>
+    </table></div></section>
+</div>
+{% endblock %}

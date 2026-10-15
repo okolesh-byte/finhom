@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }} — Finhom{% endblock %}
+{% block content %}
+<article class="page article-page">
+    <a class="back-link" href="{% url 'articles:list' %}">← Все статьи</a>
+    <header class="article-header"><span class="category-label">{{ article.category.name }}</span><h1>{{ article.title }}</h1><p>{{ article.summary }}</p><small>{{ article.published_at|date:'d.m.Y' }} · {{ article.author.first_name }}</small></header>
+    {% if article.cover %}<img class="article-cover" src="{{ article.cover.url }}" alt="Обложка статьи">{% endif %}
+    <div class="article-text">{{ article.body|linebreaks }}</div>
+    <section class="comments">
+        <div class="section-title"><div><h2>Комментарии</h2><p>Сообщения появляются после проверки модератором</p></div></div>
+        {% for comment in comments %}<article class="comment"><span class="avatar">{{ comment.author.first_name|first|upper|default:'У' }}</span><div><strong>{{ comment.author.first_name|default:'Удалённый пользователь' }}</strong><small>{{ comment.created_at|date:'d.m.Y H:i' }}</small><p>{{ comment.text }}</p></div></article>{% empty %}<p class="muted">Опубликованных комментариев пока нет.</p>{% endfor %}
+        {% if own_comments %}<div class="own-comments"><h3>Мои комментарии на проверке и отклонённые</h3>{% for comment in own_comments %}<article class="comment"><div><span class="status">{{ comment.get_status_display }}</span><p>{{ comment.text }}</p>{% if comment.moderator_note %}<small>Ответ модератора: {{ comment.moderator_note }}</small>{% endif %}</div></article>{% endfor %}</div>{% endif %}
+        <form method="post" class="form-stack comment-form">{% csrf_token %}{{ form.as_p }}<button class="button primary">Отправить на модерацию</button></form>
+    </section>
+</article>
+{% endblock %}

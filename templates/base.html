@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Finhom{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    {% block head %}{% endblock %}
+</head>
+<body class="{% if user.is_authenticated and not public_layout %}app-body{% else %}public-body{% endif %}">
+{% if user.is_authenticated and not public_layout %}
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="{% url 'articles:list' %}"><span>F</span> Finhom</a>
+            <nav class="side-nav" aria-label="Основная навигация">
+                <a href="{% url 'articles:list' %}"><i data-lucide="newspaper"></i> Статьи</a>
+                <a href="{% url 'analytics:dashboard' %}"><i data-lucide="layout-dashboard"></i> Кабинет</a>
+                <a href="{% url 'finances:transactions' %}"><i data-lucide="arrow-left-right"></i> Операции</a>
+                <a href="{% url 'finances:planning' %}"><i data-lucide="wallet-cards"></i> Бюджеты</a>
+                <a href="{% url 'finances:goals' %}"><i data-lucide="target"></i> Цели</a>
+                <a href="{% url 'loans:list' %}"><i data-lucide="landmark"></i> Кредиты</a>
+                <a href="{% url 'articles:suggest' %}"><i data-lucide="lightbulb"></i> Предложить тему</a>
+                {% if user.is_staff %}{% if perms.articles.change_comment or perms.articles.change_topicsuggestion or perms.articles.change_article %}<a href="{% url 'articles:moderation' %}"><i data-lucide="shield-check"></i> Модерация</a>{% endif %}{% endif %}
+            </nav>
+            <div class="sidebar-user">
+                <a href="{% url 'accounts:profile' %}" class="user-link">
+                    {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" alt="">{% else %}<span class="avatar">{{ user.first_name|first|upper }}</span>{% endif %}
+                    <span><b>{{ user.first_name }}</b><small>{{ user.email }}</small></span>
+                </a>
+                <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="icon-button" aria-label="Выйти" title="Выйти"><i data-lucide="log-out"></i></button></form>
+            </div>
+        </aside>
+        <main class="app-main">
+            <header class="mobile-header"><button class="icon-button" id="menuButton" aria-label="Открыть меню"><i data-lucide="menu"></i></button><b>Finhom</b></header>
+            {% if messages %}<div class="messages">{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}</div>{% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% else %}
+    {% if messages %}<div class="messages public-messages">{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% block public_content %}{% endblock %}
+{% endif %}
+{% block scripts %}{% endblock %}
+<script src="{% static 'core/js/app.js' %}?v=20261015-2" defer></script>
+</body>
+</html>

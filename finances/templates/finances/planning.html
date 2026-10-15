@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Планирование — Finhom{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-heading"><div><p class="eyebrow">План на месяц</p><h1>Бюджеты и обязательные платежи</h1><p>Заранее распределите деньги и следите за лимитами.</p></div></div>
+    <div class="two-columns">
+        <section class="data-section">
+            <div class="section-title"><div><h2>Бюджеты категорий</h2><p>Повторное сохранение обновляет лимит</p></div></div>
+            {% for item in budgets %}<div class="budget-row"><div><strong>{{ item.category.name }} · {{ item.month|date:'m.Y' }}</strong><span>{{ item.spent|floatformat:0 }} из {{ item.limit|floatformat:0 }} ₽</span></div><div class="progress {% if item.percent > 100 %}over{% endif %}"><span style="width:{% if item.percent > 100 %}100{% else %}{{ item.percent }}{% endif %}%"></span></div><form method="post" action="{% url 'finances:budget_delete' item.pk %}" class="compact-action" onsubmit="return confirm('Удалить бюджет?')">{% csrf_token %}<button class="icon-button danger" aria-label="Удалить бюджет" title="Удалить бюджет"><i data-lucide="trash-2"></i></button></form></div>{% empty %}<div class="empty-state"><p>Бюджеты ещё не созданы.</p></div>{% endfor %}
+            <form method="post" class="inline-form">{% csrf_token %}<input type="hidden" name="action" value="budget">{{ budget_form.as_p }}<button class="button primary">Сохранить бюджет</button></form>
+        </section>
+        <section class="data-section">
+            <div class="section-title"><div><h2>Свои категории</h2><p>Дополните готовый список</p></div></div>
+            {% for item in custom_categories %}<div class="simple-row"><span>{{ item.name }}</span><span class="status status-{{ item.kind }}">{{ item.get_kind_display }}</span></div>{% empty %}<p class="muted">Своих категорий пока нет.</p>{% endfor %}
+            <form method="post" class="form-stack compact">{% csrf_token %}<input type="hidden" name="action" value="category">{{ category_form.as_p }}<button class="button secondary">Добавить категорию</button></form>
+            <hr>
+            <div class="section-title"><div><h2>Обязательные платежи</h2><p>Повторяются каждый месяц</p></div></div>
+            {% for item in recurring %}<div class="simple-row"><span>{{ item.name }} · {{ item.day }} число</span><span class="list-value"><strong>{{ item.amount|floatformat:0 }} ₽</strong><span class="row-actions"><a class="icon-button" href="{% url 'finances:recurring_edit' item.pk %}" aria-label="Изменить" title="Изменить"><i data-lucide="pencil"></i></a><form method="post" action="{% url 'finances:recurring_delete' item.pk %}" onsubmit="return confirm('Удалить обязательный платёж?')">{% csrf_token %}<button class="icon-button danger" aria-label="Удалить" title="Удалить"><i data-lucide="trash-2"></i></button></form></span></span></div>{% empty %}<p class="muted">Платежей пока нет.</p>{% endfor %}
+            <form method="post" class="form-stack compact">{% csrf_token %}<input type="hidden" name="action" value="recurring">{{ recurring_form.as_p }}<button class="button secondary">Добавить платёж</button></form>
+        </section>
+    </div>
+</div>
+{% endblock %}

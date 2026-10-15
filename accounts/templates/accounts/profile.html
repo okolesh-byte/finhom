@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Профиль — Finhom{% endblock %}
+{% block content %}
+<div class="page narrow"><div class="page-heading"><div><p class="eyebrow">Личные данные</p><h1>Профиль</h1><p>Фотография помогает сделать профиль завершённым.</p></div><a class="button secondary" href="{% url 'password_change' %}"><i data-lucide="key-round"></i> Изменить пароль</a></div><section class="form-section"><div class="profile-preview">{% if profile.avatar %}<img src="{{ profile.avatar.url }}" alt="Фотография профиля">{% else %}<span class="avatar avatar-large">{{ user.first_name|first|upper }}</span>{% endif %}<div><strong>{{ user.first_name }}</strong><small>{{ user.email }}</small></div></div><form method="post" enctype="multipart/form-data" class="form-stack">{% csrf_token %}{{ form.as_p }}<button class="button primary">Сохранить профиль</button></form></section></div>
+{% endblock %}

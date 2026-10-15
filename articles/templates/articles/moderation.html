@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Модерация — Finhom{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">Панель сотрудника</p>
+            <h1>Модерация материалов</h1>
+            <p>Проверяйте обсуждения, отвечайте на предложенные темы и управляйте статьями.</p>
+        </div>
+        <a class="button secondary" href="{% url 'admin:index' %}"><i data-lucide="settings"></i> Django Admin</a>
+    </div>
+
+    <div class="metric-grid moderation-metrics">
+        <article><span>Ждут проверки</span><strong>{{ pending_comments }}</strong><small>комментариев</small></article>
+        <article><span>Новые идеи</span><strong>{{ pending_suggestions }}</strong><small>предложений тем</small></article>
+        <article><span>Всего статей</span><strong>{{ articles|length }}</strong><small>в базе знаний</small></article>
+    </div>
+
+    {% if perms.articles.change_comment %}
+    <section class="data-section">
+        <div class="section-title"><div><h2>Комментарии</h2><p>Текст можно исправить перед публикацией</p></div></div>
+        <div class="moderation-list">
+            {% for comment in comments %}
+            <form method="post" action="{% url 'articles:moderate_comment' comment.pk %}" class="moderation-item form-stack">
+                {% csrf_token %}
+                <div class="moderation-meta">
+                    <div><strong>{{ comment.author.first_name|default:'Удалённый пользователь' }}</strong><small>{{ comment.author.email|default:'Аккаунт удалён' }} · {{ comment.created_at|date:'d.m.Y H:i' }}</small></div>
+                    {% if comment.article.is_published %}<a href="{% url 'articles:detail' comment.article.pk %}">{{ comment.article.title }}</a>{% else %}<span>{{ comment.article.title }} · Черновик</span>{% endif %}
+                </div>
+                <label for="comment-text-{{ comment.pk }}">Комментарий</label>
+                <textarea id="comment-text-{{ comment.pk }}" name="text" rows="3" required>{{ comment.text }}</textarea>
+                <div class="moderation-controls">
+                    <div><label for="comment-status-{{ comment.pk }}">Статус</label><select id="comment-status-{{ comment.pk }}" name="status">{% for value, label in comment.STATUSES %}<option value="{{ value }}"{% if comment.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+                    <div><label for="comment-note-{{ comment.pk }}">Причина решения</label><input id="comment-note-{{ comment.pk }}" name="moderator_note" value="{{ comment.moderator_note }}" maxlength="300"></div>
+                    <button class="button primary" type="submit">Сохранить</button>
+                </div>
+            </form>
+            {% empty %}<div class="empty-state"><p>Комментариев пока нет.</p></div>{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% if perms.articles.change_topicsuggestion %}
+    <section class="data-section">
+        <div class="section-title"><div><h2>Предложенные темы</h2><p>Ответ будет виден пользователю в его списке</p></div></div>
+        <div class="moderation-list">
+            {% for item in suggestions %}
+            <form method="post" action="{% url 'articles:moderate_suggestion' item.pk %}" class="moderation-item form-stack">
+                {% csrf_token %}
+                <div class="moderation-meta"><div><strong>{{ item.title }}</strong><small>{{ item.user.first_name }} · {{ item.created_at|date:'d.m.Y H:i' }}</small></div><span class="status">{{ item.get_status_display }}</span></div>
+                <p>{{ item.description }}</p>
+                <div class="moderation-controls">
+                    <div><label for="suggestion-status-{{ item.pk }}">Статус</label><select id="suggestion-status-{{ item.pk }}" name="status">{% for value, label in item.STATUSES %}<option value="{{ value }}"{% if item.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+                    <div><label for="suggestion-note-{{ item.pk }}">Ответ пользователю</label><input id="suggestion-note-{{ item.pk }}" name="moderator_note" value="{{ item.moderator_note }}" maxlength="300"></div>
+                    <button class="button primary" type="submit">Сохранить</button>
+                </div>
+            </form>
+            {% empty %}<div class="empty-state"><p>Предложений пока нет.</p></div>{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% if perms.articles.change_article %}
+    <section class="data-section">
+        <div class="section-title"><div><h2>Статьи</h2><p>Быстро включайте и выключайте публикацию</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Статья</th><th>Категория</th><th>Комментарии</th><th>Статус</th><th></th></tr></thead><tbody>
+        {% for article in articles %}<tr><td><strong>{{ article.title }}</strong></td><td>{{ article.category.name }}</td><td>{{ article.comments_count }}{% if article.pending_comments_count %} · {{ article.pending_comments_count }} ждут{% endif %}</td><td><span class="status">{% if article.is_published %}Опубликована{% else %}Черновик{% endif %}</span></td><td class="row-actions"><form method="post" action="{% url 'articles:toggle_article' article.pk %}">{% csrf_token %}<button class="button secondary" type="submit">{% if article.is_published %}Скрыть{% else %}Опубликовать{% endif %}</button></form></td></tr>
+        {% empty %}<tr><td colspan="5" class="table-empty">Статей пока нет.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
